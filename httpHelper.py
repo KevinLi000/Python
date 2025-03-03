@@ -1,2 +1,3 @@
+import urllib3 as urllib
 def PostAsync(url):
-    print(url)
+    urllib.request("POST",url=url)
