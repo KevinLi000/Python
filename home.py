@@ -1,3 +1,5 @@
 # This is a main class for project
-def HelloWorld():
+import subprocess
+
+def GitCommod():
     print('Hello, World!')
