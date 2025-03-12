@@ -1,13 +1,13 @@
 # This is a main class for project
-# from github import Github
-# from configs import app as config
-# from github import InputGitTreeElement
+from github import Github
+from configs import app as config
+from github import InputGitTreeElement
+import common as c
+# Authenticate using your GitHub token
+g = c.generateGitHubByAccessToken("")
 
-# # Authenticate using your GitHub token
-# g = Github(config.AccessToken)
-
-# # Get a repository
-# repo = g.get_repo("KevinLi000/Python")
+# Get a repository
+repo = g.get_repo("KevinLi000/Python")
 
 # # Get the main branch
 # main_ref = repo.get_git_ref("heads/main")
