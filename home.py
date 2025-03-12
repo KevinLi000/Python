@@ -1,14 +1,17 @@
 # This is a main class for project
 from github import Github
-from configs import app as config
 from github import InputGitTreeElement
 import common as c
+from repositoryhelper import RepostoryHelper
+
 # Authenticate using your GitHub token
 g = c.generateGitHubByAccessToken("")
-
-# Get a repository
-repo = g.get_repo("KevinLi000/Python")
-
+repository = RepostoryHelper(g)
+repo_name = "KevinLi000/Python"
+repo = repository.getRepository(repo_name)
+branches = [branch.name for branch in repo.get_branches()]
+for branch in branches:
+    print(branch)
 # # Get the main branch
 # main_ref = repo.get_git_ref("heads/main")
 # main_sha = main_ref.object.sha
