@@ -2,16 +2,18 @@
 from github import Github
 from github import InputGitTreeElement
 import common as c
-from repositoryhelper import RepostoryHelper
+from repositoryhelper import RepositoryHelper
 
 # Authenticate using your GitHub token
 g = c.generateGitHubByAccessToken("")
-repository = RepostoryHelper(g)
+repository = RepositoryHelper(g)
 repo_name = "KevinLi000/Python"
 repo = repository.getRepository(repo_name)
 branches = [branch.name for branch in repo.get_branches()]
 for branch in branches:
     print(branch)
+
+
 # # Get the main branch
 # main_ref = repo.get_git_ref("heads/main")
 # main_sha = main_ref.object.sha

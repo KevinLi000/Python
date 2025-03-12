@@ -2,9 +2,8 @@ from github import GithubException
 import subprocess
 
 class RepositoryHelper:
-    def __init__(self, github, repoName):
+    def __init__(self, github):
        self.github = github
-       self.repoName = repoName
     def getRepository(self, repoName):
         try:
             repo = self.github.get_repo(repoName)
