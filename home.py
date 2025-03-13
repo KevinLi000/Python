@@ -2,43 +2,94 @@
 from github import Github
 from github import InputGitTreeElement
 import common as c
-from repositoryhelper import RepositoryHelper
+# from repositoryhelper import RepositoryHelper
 from branchhelper import BranchHelper
+import git
+# import git
+import os
 
-# Authenticate using your GitHub token
-g = c.generateGitHubByAccessToken("")
-repository = RepositoryHelper(g)
-repo_name = "KevinLi000/Python"
-repo = g.get_repo(repo_name)
-repo.create_hook
-repo = repository.getRepository(repo_name)
-#Create branch
-branch = BranchHelper(repo=repo)
+repo_url = "https://github.com/KevinLi000/.NetCore.git"  # Replace with your GitHub repository
+repo_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "testRepository")
+if not os.path.exists(repo_path):
+    os.makedirs(repo_path)
+    repo = git.Repo.clone_from(repo_url, repo_path)
+else:
+    repo = git.Repo(repo_path)
+
+print(repo.git.status()) 
+
 branch_name = "test"
-branch.getOrCreateBranch(branch_name)
+target_branch = "main"
+if branch_name in repo.heads:
+    repo.git.checkout(branch_name)
+    print(f"Switched to existing branch '{branch_name}'")
+else:
+    repo.git.checkout('-b', branch_name)
+    print(f"Created and switched to new branch '{branch_name}'")
+current_branch = branch_name
+# Get the base merge
+merge_base = repo.merge_base(current_branch, target_branch)
 
-# branches = [branch.name for branch in repo.get_branches()]
-# for branch in branches:
-#     print(branch)
+# Get the latest branch
+current_commit = repo.commit(current_branch)
+target_commit = repo.commit(target_branch)
+canMerge = False
+if merge_base and merge_base[0] != current_commit:
+    print(f"{current_branch} has unmerged changes to {target_branch}")
+    canMerge = True
+else:
+    print(f"{current_branch} already merged {target_branch}")
 
+if canMerge :
+    # Get the active branch
+    current_branch = repo.active_branch
+    print(f"Current branch: {current_branch}")
 
+    # Switch to main branch
+    main_branch = "main"
+    repo.git.checkout(main_branch)
 
-# # Get the main branch
-# main_ref = repo.get_git_ref("heads/main")
-# main_sha = main_ref.object.sha
+    # Pull latest changes from remote main
+    repo.git.pull("origin", main_branch)
 
-# file_path = "python/test.txt"
-# file_content = "This is an automated commit."
-# file_sha = repo.get_contents(file_path).sha if repo.get_contents(file_path) else None
+    # Merge the current branch into main
+    repo.git.merge(current_branch)
 
-# # Create a new commit
-# repo.update_file(file_path, "Add new file", file_content, file_sha)
-# print("File committed successfully!")
-# pr = repo.create_pull(
-#     title="Automated PR",
-#     body="This is an automatically created pull request.",
-#     head='heads/main',
-#     base="main"
-# )
-# print(f"Pull Request created: {pr.html_url}")
-# Create new branch
+    # Push merged changes to remote
+    repo.git.push("origin", main_branch)
+
+    print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")
+else:
+    file_name = "new_feature.txt"
+    file_content = "Hello World 01."
+
+    # Create or modify a file
+    file_path = os.path.join(repo_path, file_name)
+    with open(file_path, 'w') as f:
+        f.write(file_content)
+
+    repo.git.add(file_name)  # Stage the file
+    repo.git.commit('-m', "Added a new feature 01")  # Commit changes
+    print("Changes committed.")
+
+    repo.git.push("origin", branch_name, set_upstream=True)
+    print(f"Pushed branch '{branch_name}' to GitHub.")
+
+    # Get the active branch
+    current_branch = repo.active_branch
+    print(f"Current branch: {current_branch}")
+
+    # Switch to main branch
+    main_branch = "main"
+    repo.git.checkout(main_branch)
+
+    # Pull latest changes from remote main
+    repo.git.pull("origin", main_branch)
+
+    # Merge the current branch into main
+    repo.git.merge(current_branch)
+
+    # Push merged changes to remote
+    repo.git.push("origin", main_branch)
+
+    print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")

@@ -14,5 +14,5 @@ class BranchHelper:
             branch_sha = branch_ref.object.sha
             print(branch_sha)
         else:
-            new_branch = self.repo.git.create_head(branch_name)
+            new_branch = self.repo.create_branch(branch_name)
             self.repo.git.push('origin', branch_name)
