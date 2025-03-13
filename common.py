@@ -14,13 +14,13 @@ def run_command(command):
 """
 def push_branch(branch_name, remote="origin"):
     """Commit the current changes and push it to remote branch"""
-    # 添加所有文件
+    # Add all files
     run_command("git add .")
     
-    # 提交更改
+    # Commit the changes
     commit_message = f"Auto commit changes to {branch_name}"
     run_command(f'git commit -m "{commit_message}"')
     
-    # 推送到远程
+    # Push to remote
     run_command(f"git push {remote} {branch_name}")
     print(f"Branch {branch_name} pushed to {remote}")
