@@ -3,15 +3,24 @@ from github import Github
 from github import InputGitTreeElement
 import common as c
 from repositoryhelper import RepositoryHelper
+from branchhelper import BranchHelper
 
 # Authenticate using your GitHub token
 g = c.generateGitHubByAccessToken("")
 repository = RepositoryHelper(g)
 repo_name = "KevinLi000/Python"
+repo = g.get_repo(repo_name)
+repo.create_hook
 repo = repository.getRepository(repo_name)
-branches = [branch.name for branch in repo.get_branches()]
-for branch in branches:
-    print(branch)
+#Create branch
+branch = BranchHelper(repo=repo)
+branch_name = "test"
+branch.getOrCreateBranch(branch_name)
+
+# branches = [branch.name for branch in repo.get_branches()]
+# for branch in branches:
+#     print(branch)
+
 
 
 # # Get the main branch
