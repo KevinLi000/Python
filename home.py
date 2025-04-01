@@ -18,7 +18,7 @@ else:
 
 print(repo.git.status()) 
 
-branch_name = "test"
+branch_name = "test2"
 target_branch = "main"
 if branch_name in repo.heads:
     repo.git.checkout(branch_name)
@@ -60,8 +60,8 @@ if canMerge :
 
     print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")
 else:
-    file_name = "new_feature.txt"
-    file_content = "Hello World 01."
+    file_name = "home.py"
+    file_content = "#This is the entrance to excute the main method\nPrint('Hello, World')\ndef main():\nprint('Hello, World') "
 
     # Create or modify a file
     file_path = os.path.join(repo_path, file_name)

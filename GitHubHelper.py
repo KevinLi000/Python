@@ -4,6 +4,7 @@ class GitHubHelper:
     def __init__(self):
         pass
     def submitChangesAutomatted(repo_remote_url, repo_path_name, branch_name, target_merge_branch = 'main', file_name='', file_content='',commit_message=''):
+        current_branch = branch_name
         repo_path = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), repo_path_name)
         if not os.path.exists(repo_path):
             os.makedirs(repo_path)
