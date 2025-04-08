@@ -60,7 +60,7 @@ if canMerge :
 
     print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")
 else:
-    file_name = "home.py"
+    file_name = "home.a.py"
     file_content = "#This is the entrance to excute the main method\nPrint('Hello, World')\ndef main():\nprint('Hello, World') \ndef main():\nprint('Hello, World')"
 
     # Create or modify a file
