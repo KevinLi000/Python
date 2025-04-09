@@ -18,7 +18,7 @@ else:
 
 print(repo.git.status()) 
 
-branch_name = "test2"
+branch_name = "test3"
 target_branch = "main"
 if branch_name in repo.heads:
     repo.git.checkout(branch_name)
