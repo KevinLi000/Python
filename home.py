@@ -15,14 +15,26 @@ if not os.path.exists(repo_path):
     repo = git.Repo.clone_from(repo_url, repo_path)
 else:
     repo = git.Repo(repo_path)
+status = repo.git.status()
+print("status=",status) 
 
-print(repo.git.status()) 
-
-branch_name = "test"
+branch_name = "test_new"
 target_branch = "main"
 if branch_name in repo.heads:
-    repo.git.checkout(branch_name)
-    print(f"Switched to existing branch '{branch_name}'")
+    try:
+        print(f"Switching to existing branch '{branch_name}'")
+        repo.git.restore('--staged', '.')
+        repo.git.checkout(branch_name)
+        print(f"Switched to existing branch '{branch_name}'")
+    except Exception as e:
+        print(f"Error switching to branch '{branch_name}': {e}")
+        # Handle the error (e.g., create a new branch or notify the user)
+        # For example, you can create a new branch with a different name
+        repo.git.restore('--staged', '.')
+        repo.index.commit("Save staged changes before checkout")        
+        new_branch_name = f"{branch_name}"
+        repo.git.checkout('-b', new_branch_name)
+        print(f"Created and switched to new branch '{new_branch_name}'")
 else:
     repo.git.checkout('-b', branch_name)
     print(f"Created and switched to new branch '{branch_name}'")
@@ -44,19 +56,17 @@ if canMerge :
     # Get the active branch
     current_branch = repo.active_branch
     print(f"Current branch: {current_branch}")
-
+    
     # Switch to main branch
     main_branch = "main"
-    repo.git.checkout(main_branch)
-
-    # Pull latest changes from remote main
-    repo.git.pull("origin", main_branch)
-
-    # Merge the current branch into main
-    repo.git.merge(current_branch)
-
-    # Push merged changes to remote
-    repo.git.push("origin", main_branch)
+    if safe_checkout_and_merge(repo, main_branch, current_branch):
+        try:
+            repo.git.push("origin", main_branch)
+            print(f"Successfully merged {current_branch} into {main_branch} and pushed")
+        except git.exc.GitCommandError as e:
+            print(f"Push failed: {e}")
+    else:
+        print("Merge operation failed - please resolve conflicts manually")
 
     print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")
 else:
@@ -93,3 +103,66 @@ else:
     repo.git.push("origin", main_branch)
 
     print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")
+
+def safe_checkout_and_merge(repo, target_branch, source_branch):
+    """
+    Safely checks out a target branch, updates it with the latest changes, 
+    and merges a source branch into it, handling uncommitted changes and 
+    potential conflicts.
+    Args:
+        repo (git.Repo): The Git repository object to operate on.
+        target_branch (str): The name of the branch to switch to and update.
+        source_branch (str): The name of the branch to merge into the target branch.
+    Returns:
+        bool: True if the operation succeeds, False if an error occurs 
+              (e.g., merge conflicts or Git command errors).
+    Behavior:
+        - Checks for uncommitted changes in the repository.
+        - Stashes uncommitted changes if any are found.
+        - Switches to the target branch and pulls the latest changes from the remote.
+        - Merges the source branch into the target branch.
+        - Restores stashed changes if they were saved earlier.
+        - Handles merge conflicts by aborting the merge and preserving changes in the stash.
+    Exceptions:
+        - Handles `git.exc.GitCommandError` for any Git command failures.
+        - Prints appropriate error messages for debugging and user awareness.
+    """
+    try:
+        # Check for uncommitted changes
+        if repo.is_dirty(untracked_files=True):
+            print(f"Stashing uncommitted changes before checkout")
+            repo.git.stash('save', f"Temporary stash before switching to {target_branch}")
+            has_stashed = True
+        else:
+            has_stashed = False
+
+        # Checkout target branch
+        print(f"Checking out {target_branch}")
+        repo.git.checkout(target_branch)
+        
+        # Update target branch
+        print(f"Pulling latest changes from {target_branch}")
+        repo.git.pull('origin', target_branch)
+        
+        # Perform merge
+        print(f"Merging {source_branch} into {target_branch}")
+        merge_result = repo.git.merge(source_branch)
+        
+        # Restore stashed changes if any
+        if has_stashed:
+            try:
+                repo.git.stash('pop')
+                print("Successfully restored stashed changes")
+            except git.exc.GitCommandError as e:
+                print(f"Stash conflicts detected: {e}")
+                print("Changes preserved in stash. Please resolve manually")
+                return False
+                
+        return True
+        
+    except git.exc.GitCommandError as e:
+        print(f"Error during checkout/merge: {e}")
+        # Cleanup
+        if repo.git.status('--porcelain'):
+            repo.git.merge('--abort')
+        return False
