@@ -105,28 +105,6 @@ else:
     print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")
 
 def safe_checkout_and_merge(repo, target_branch, source_branch):
-    """
-    Safely checks out a target branch, updates it with the latest changes, 
-    and merges a source branch into it, handling uncommitted changes and 
-    potential conflicts.
-    Args:
-        repo (git.Repo): The Git repository object to operate on.
-        target_branch (str): The name of the branch to switch to and update.
-        source_branch (str): The name of the branch to merge into the target branch.
-    Returns:
-        bool: True if the operation succeeds, False if an error occurs 
-              (e.g., merge conflicts or Git command errors).
-    Behavior:
-        - Checks for uncommitted changes in the repository.
-        - Stashes uncommitted changes if any are found.
-        - Switches to the target branch and pulls the latest changes from the remote.
-        - Merges the source branch into the target branch.
-        - Restores stashed changes if they were saved earlier.
-        - Handles merge conflicts by aborting the merge and preserving changes in the stash.
-    Exceptions:
-        - Handles `git.exc.GitCommandError` for any Git command failures.
-        - Prints appropriate error messages for debugging and user awareness.
-    """
     try:
         # Check for uncommitted changes
         if repo.is_dirty(untracked_files=True):
