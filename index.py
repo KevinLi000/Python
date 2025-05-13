@@ -7,7 +7,7 @@ ghh = GitHubHelper()
 def home():
     data = {
         "id": 1,
-        "title": 'test title',
+        "title": 'github repo title',
         "completed": False
     }
     return render_template("index.html", todo=data)  # 渲染页面并传递数据
