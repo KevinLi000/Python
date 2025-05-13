@@ -80,11 +80,11 @@ else:
     with open(file_path, 'w') as f:
         f.write(file_content)
     # Stage the file
-    repo.git.add(file_name)  
+    repo.git.add(file_name)
     # Commit changes
     repo.git.commit('-m', "Added a new feature 01")  
     print("Changes committed.")
-
+    # Push changes
     repo.git.push("origin", branch_name, set_upstream=True)
     print(f"Pushed branch '{branch_name}' to GitHub.")
 
