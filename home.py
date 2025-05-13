@@ -79,9 +79,10 @@ else:
     file_path = os.path.join(repo_path, file_name)
     with open(file_path, 'w') as f:
         f.write(file_content)
-
-    repo.git.add(file_name)  # Stage the file
-    repo.git.commit('-m', "Added a new feature 01")  # Commit changes
+    # Stage the file
+    repo.git.add(file_name)  
+    # Commit changes
+    repo.git.commit('-m', "Added a new feature 01")  
     print("Changes committed.")
 
     repo.git.push("origin", branch_name, set_upstream=True)
