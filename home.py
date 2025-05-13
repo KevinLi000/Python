@@ -59,6 +59,7 @@ if canMerge :
     
     # Switch to main branch
     main_branch = "main"
+    #Checkout and merge safely
     if safe_checkout_and_merge(repo, main_branch, current_branch):
         try:
             repo.git.push("origin", main_branch)
