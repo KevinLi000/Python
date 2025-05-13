@@ -140,7 +140,13 @@ def safe_checkout_and_merge(repo, target_branch, source_branch):
                 return False
                 
         return True
-        
+    # Handle the exception if the merge fails
+    except git.exc.GitCommandError as e:
+        print(f"Error during checkout/merge: {e}")
+        # Cleanup
+        if repo.git.status('--porcelain'):
+            repo.git.merge('--abort')
+        return False    
     except git.exc.GitCommandError as e:
         print(f"Error during checkout/merge: {e}")
         # Cleanup
