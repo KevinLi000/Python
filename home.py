@@ -106,7 +106,7 @@ else:
     repo.git.push("origin", main_branch)
 
     print(f"Successfully merged {current_branch} into {main_branch} and pushed to remote.")
-
+# This is a main class for project
 def safe_checkout_and_merge(repo, target_branch, source_branch):
     try:
         # Check for uncommitted changes
